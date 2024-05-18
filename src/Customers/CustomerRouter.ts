@@ -6,7 +6,7 @@ const customerRouter = express.Router();
 
 customerRouter.post("/create", auth, customerController.createCustomer);
 
-customerRouter.get("", auth, customerController.getAllCustomers);
+customerRouter.get("/all", auth, customerController.getAllCustomers);
 
 customerRouter.get("/:id", auth, customerController.getParticularCustomer);
 

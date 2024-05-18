@@ -2,6 +2,7 @@ import { Repository } from "sequelize-typescript";
 import Customer, { ICustomer } from "./Customer";
 
 import { IUserService } from "../User/UserService";
+import { Op } from "sequelize";
 
 class CustomerService {
   private _customerModel;
@@ -27,14 +28,14 @@ class CustomerService {
       },
     });
 
-    if (checkEmail) {
+    if (checkEmail && body.email !== "" && body.email !== null) {
       throw {
         message: "Email already exists",
         status: 400,
       };
     }
 
-    if (checkFiscalCode) {
+    if (checkFiscalCode && body.fiscalCode !== "" && body.fiscalCode !== null) {
       throw {
         message: "Fiscal Code must be unique",
         status: 400,
@@ -48,13 +49,19 @@ class CustomerService {
     return createCustomer;
   }
 
-  async getAllCustomers(id: string) {
+  async getAllCustomers(id: string, query: any, page: any, limit: any) {
     await this._userService.getUser(id);
 
-    const customers = await this._customerModel.findAll({
+    const customers = await this._customerModel.findAndCountAll({
       where: {
         userId: id,
+
+        firstName: {
+          [Op.like]: `%${query}%`,
+        },
       },
+      limit: limit,
+      offset: page,
     });
 
     return customers;

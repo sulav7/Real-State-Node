@@ -39,7 +39,16 @@ class CustomerController {
       // @ts-ignore
       const userId = req.id;
 
-      const customers = await customerService.getAllCustomers(userId);
+      const searchQuery = req.query;
+
+      const page = searchQuery.page || 0;
+
+      const customers = await customerService.getAllCustomers(
+        userId,
+        searchQuery.query || "",
+        page,
+        searchQuery.limit
+      );
       return res
         .status(200)
         .json(success("Customers Details Shown", res.statusCode, customers));
